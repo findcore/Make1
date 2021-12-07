@@ -56,6 +56,7 @@
 <script src="http://malsup.github.io/min/jquery.form.min.js"></script>
 <script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
 <script>
+    var filepath;
     var jcrop;
     var imageFileName;
     function uploadFile() {
@@ -63,14 +64,16 @@
         $form.ajaxSubmit({
             success: function(response) {
                 var json = JSON.parse(response);
-                if (json.result == 'success') {
-                    var $img = $('<img style="max-width: 100%;">');
-                    $img.attr('src', json.filename);
-                    $img.addClass('modal-image');
-                    $img.appendTo($('#image_cropper_body'));
-                    imageFileName = json.filename;
-                    $('#image_cropper').modal();
-                }
+                
+                var $img = $('<img style="max-width: 100%;">');
+                filepath=String.fromCharCode(parseInt(json.imgfile,16));
+                console.log(filepath);
+                $img.attr('src', filepath);
+                $img.addClass('modal-image');
+                $img.appendTo($('#image_cropper_body'));
+                imageFileName = filepath;
+                $('#image_cropper').modal();
+                
             }
         });
     }
