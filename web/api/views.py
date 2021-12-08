@@ -9,17 +9,21 @@ from trans.models import FileUpload
 
 
 
-@csrf_exempt
 def fileUpload(request):
     if request.method == 'POST':
-        title = 45
+        num=FileUpload.objects.values_list('title',flat=True)
+        num=list(map(int,num))
+        num.sort()
+        number=num[-1]+1
+        print(number)
+        title = number
         img = request.FILES["image"]
         fileupload = FileUpload(
             title=title,
             imgfile=img,
         )
         fileupload.save()
-        filesend = FileUpload.objects.get(title__contains=45)
+        filesend = FileUpload.objects.get(title__contains=number)
         filesend2 = filesend.__dict__
 
 

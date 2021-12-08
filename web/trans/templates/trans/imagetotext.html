@@ -63,17 +63,20 @@
         var $form = $('#image_form');
         $form.ajaxSubmit({
             success: function(response) {
+
                 var json = JSON.parse(response);
-                
+                console.log(json);
+
+                console.log(json.result);
+                if (json.imgfile) {
                 var $img = $('<img style="max-width: 100%;">');
-                filepath=String.fromCharCode(parseInt(json.imgfile,16));
-                console.log(filepath);
-                $img.attr('src', filepath);
+                console.log(json.imgfile);
+                $img.attr('src', '/media/'+json.imgfile);
                 $img.addClass('modal-image');
                 $img.appendTo($('#image_cropper_body'));
-                imageFileName = filepath;
+                imageFileName = json.imgfile;
                 $('#image_cropper').modal();
-                
+                }
             }
         });
     }
@@ -105,6 +108,36 @@
             }
         })
     }
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
 </script>
 </body>
 </html>
