@@ -20,4 +20,5 @@ from api import views
 
 urlpatterns = [
     path('img_upload/',views.fileUpload,name="Imgupload"),
+    path('img_crop/',views.filecrop, name="Imgcrop"),
 ]

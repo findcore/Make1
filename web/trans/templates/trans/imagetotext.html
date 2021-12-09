@@ -93,12 +93,12 @@
         var bounds = jcrop.getBounds();
         var select = jcrop.tellSelect();
         $.ajax({
-            url: '',
-            data: {
+            url: '/api/img_crop/',
+            data: JSON.stringify({
                 bound: bounds,
                 image: imageFileName,
                 select: select
-            },
+            }),
             type: 'post',
             success: function(response) {
                 var json = JSON.parse(response);

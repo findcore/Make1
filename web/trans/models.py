@@ -6,3 +6,7 @@ class FileUpload(models.Model):
 
     def __str__(self):
         return self.title
+
+class CropImage(models.Model):
+    fileupload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+    imgfile2 = models.ImageField(null=True, upload_to="crop/", blank=True)
