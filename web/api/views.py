@@ -1,4 +1,8 @@
 import json
+import sys
+from io import BytesIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -32,6 +36,10 @@ def fileUpload(request):
 
 def filecrop(request):
     if request.method == 'POST':
+        try: subkey=CropImage.objects.last().id + 1
+        except: subkey=1
+        key=FileUpload.objects.last()
+
         # print(request.body)
         BODY=json.loads(request.body)
         # print(BODY)
@@ -45,13 +53,29 @@ def filecrop(request):
         left, upper, right, height=list(map(int,[BODY['select']['x']*ratw,BODY['select']['y']*rath,BODY['select']['x2']*ratw,BODY['select']['y2']*rath]))
         # print(left,upper,right,height)
         cropimg=simg.crop((left,upper,right,height))
-        cropimg.save(output, format='JPEG', quality=85)
-        output = io.BytesIO()
-        output.seek(0)
+        output=image_to_bytes(cropimg)
+        cropimg2=InMemoryUploadedFile(file=output,
+                             field_name="ImageField",
+                             name=str(subkey)+'.png',
+                             content_type='image/png',
+                             size=sys.getsizeof(output),
+                             charset=None)
 
-        key=FileUpload.objects.last()
 
-        cropobj=CropImage(fileupload=key,imgfile2=cropimg)
+
+        cropobj=CropImage(fileupload=key,imgfile2=cropimg2)
 
 
         cropobj.save()
+        cropobj = cropobj.__dict__
+
+        del(cropobj['_state'])
+        cropobj=json.dumps(cropobj)
+        return JsonResponse(data=cropobj, status=202,safe=False)
+
+
+def image_to_bytes(img):
+    output = BytesIO()
+    img.save(output, format='PNG', quality=95)
+    output.seek(0)
+    return output

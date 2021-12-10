@@ -65,12 +65,12 @@
             success: function(response) {
 
                 var json = JSON.parse(response);
-                console.log(json);
+                // console.log(json);
 
-                console.log(json.result);
+                // console.log(json.result);
                 if (json.imgfile) {
                 var $img = $('<img style="max-width: 100%;">');
-                console.log(json.imgfile);
+                // console.log(json.imgfile);
                 $img.attr('src', '/media/'+json.imgfile);
                 $img.addClass('modal-image');
                 $img.appendTo($('#image_cropper_body'));
@@ -101,8 +101,10 @@
             }),
             type: 'post',
             success: function(response) {
+                console.log(response)
                 var json = JSON.parse(response);
-                $('#cropped_image').attr('src', json.filename);
+                console.log(json)
+                $('#cropped_image').attr('src', '/media/'+json.imgfile2);
                 $('#cropped_image_src').val(json.filename);
                 $('#image_cropper').modal('hide');
             }
